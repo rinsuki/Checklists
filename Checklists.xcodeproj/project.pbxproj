@@ -15,6 +15,7 @@
 		CEC597C324E0B112003B63D7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CEC597C124E0B112003B63D7 /* Main.storyboard */; };
 		CEC597CF24E0B112003B63D7 /* ChecklistsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC597CE24E0B112003B63D7 /* ChecklistsTests.swift */; };
 		CEC597DA24E0B112003B63D7 /* ChecklistsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC597D924E0B112003B63D7 /* ChecklistsUITests.swift */; };
+		CEC597E924E0B785003B63D7 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CEC597E824E0B785003B63D7 /* CloudKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -50,6 +51,7 @@
 		CEC597D524E0B112003B63D7 /* ChecklistsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ChecklistsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CEC597D924E0B112003B63D7 /* ChecklistsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChecklistsUITests.swift; sourceTree = "<group>"; };
 		CEC597DB24E0B112003B63D7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		CEC597E824E0B785003B63D7 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,6 +59,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CEC597E924E0B785003B63D7 /* CloudKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -84,6 +87,7 @@
 				CEC597CD24E0B112003B63D7 /* ChecklistsTests */,
 				CEC597D824E0B112003B63D7 /* ChecklistsUITests */,
 				CEC597B424E0B110003B63D7 /* Products */,
+				CEC597E724E0B785003B63D7 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -136,6 +140,14 @@
 				CEC597DB24E0B112003B63D7 /* Info.plist */,
 			);
 			path = ChecklistsUITests;
+			sourceTree = "<group>";
+		};
+		CEC597E724E0B785003B63D7 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				CEC597E824E0B785003B63D7 /* CloudKit.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -438,6 +450,7 @@
 				CODE_SIGN_ENTITLEMENTS = Checklists/Checklists.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_ASSET_PATHS = "\"Checklists/Preview Content\"";
 				DEVELOPMENT_TEAM = 4XKKKM86RN;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -461,6 +474,7 @@
 				CODE_SIGN_ENTITLEMENTS = Checklists/Checklists.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_ASSET_PATHS = "\"Checklists/Preview Content\"";
 				DEVELOPMENT_TEAM = 4XKKKM86RN;
 				ENABLE_HARDENED_RUNTIME = YES;
