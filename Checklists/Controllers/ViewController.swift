@@ -22,6 +22,7 @@ class ViewController: NSViewController {
         })
         v.addTableColumn(.init(identifier: .init("textfield")))
         v.allowsColumnResizing = false
+        v.usesAutomaticRowHeights = true
     }
     lazy var tableScrollView = NSScrollView() ※ { v in
         v.documentView = tableView
