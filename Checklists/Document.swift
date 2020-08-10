@@ -7,19 +7,59 @@
 //
 
 import Cocoa
-import SwiftUI
+import Combine
 
-class Check: Codable {
-    var checked: Bool
-    let title: String
+class Check: NSObject, Codable {
+    @Published var checked: Bool
+    @Published var title: String
+    
+    init(title: String) {
+        self.title = title
+        self.checked = false
+    }
+    
+    enum CodingKeys: String, CodingKey {
+        case checked
+        case title
+    }
+
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        checked = try container.decode(Bool.self, forKey: .checked)
+        title = try container.decode(String.self, forKey: .title)
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(checked, forKey: .checked)
+        try container.encode(title, forKey: .title)
+    }
 }
 
-class DocumentContent: Codable {
+class DocumentContent: NSObject, Codable {
     var checks = [Check]()
+    
+    enum CodingKeys: CodingKey {
+        case checks
+    }
+    
+    override init() {
+        super.init()
+    }
+    
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        checks = try container.decode([Check].self, forKey: .checks)
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(checks, forKey: .checks)
+    }
 }
 
 class Document: NSDocument, Codable {
-    var content = DocumentContent()
+    @objc dynamic var content = DocumentContent()
 
     override init() {
         super.init()
@@ -29,20 +69,14 @@ class Document: NSDocument, Codable {
     override class var autosavesInPlace: Bool {
         return true
     }
-
+    
     override func makeWindowControllers() {
-        // Create the SwiftUI view that provides the window contents.
-        let contentView = ContentView()
-
         // Create the window and set the content view.
-        let window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 480, height: 300),
-            styleMask: [.titled, .closable, .miniaturizable, .resizable, .fullSizeContentView],
-            backing: .buffered, defer: false)
-        window.center()
-        window.contentView = NSHostingView(rootView: contentView)
-        let windowController = NSWindowController(window: window)
-        self.addWindowController(windowController)
+        self.addWindowController(WindowController())
+    }
+    
+    override var fileNameExtensionWasHiddenInLastRunSavePanel: Bool {
+        return false
     }
 
     override func data(ofType typeName: String) throws -> Data {
