@@ -38,6 +38,7 @@ class Check: NSObject, Codable, NSCopying {
     func copy(with zone: NSZone? = nil) -> Any {
         let new = Check(title: title)
         new.checked = checked
+        new.undoManager = undoManager
         return new
     }
 }
