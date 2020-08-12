@@ -23,6 +23,7 @@ class ViewController: NSViewController {
         v.addTableColumn(.init(identifier: .init("textfield")))
         v.allowsColumnResizing = false
         v.usesAutomaticRowHeights = true
+        v.delegate = self
     }
     lazy var tableScrollView = NSScrollView() ※ { v in
         v.documentView = tableView
@@ -42,12 +43,13 @@ class ViewController: NSViewController {
     
     override func viewWillAppear() {
         super.viewWillAppear()
-        windowController.beforeAppear()
-        print(representedObject)
+    }
+    
+    var document: Document {
+        return representedObject as! Document
     }
     
     @objc func createNewCheck(_ sender: AnyObject) {
-        let document = representedObject as! Document
         document.content.checks.append(.init(title: ""))
         let row = document.content.checks.count - 1
         // 新しく追加した物にフォーカスを当てる
@@ -58,3 +60,27 @@ class ViewController: NSViewController {
     }
 }
 
+extension ViewController: NSTableViewDelegate {
+    func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
+        switch tableColumn?.identifier {
+        case .init(rawValue: "checkbox"):
+            let button = NSButton(checkboxWithTitle: "", target: self, action: #selector(onChecked(_:)))
+            let wrapper = WrapperView(wrapped: button)
+            button.bind(.value, to: wrapper, withKeyPath: "objectValue.checked", options: nil)
+            return wrapper
+        case .init(rawValue: "textfield"):
+            let field = NSTextField(string: "")
+            field.drawsBackground = false
+            field.isBezeled = false
+            let wrapper = WrapperView(wrapped: field)
+            field.bind(.value, to: wrapper, withKeyPath: "objectValue.title", options: nil)
+            return wrapper
+        default:
+            return nil
+        }
+    }
+    
+    @objc func onChecked(_ sender: NSButton) {
+        sender.window?.makeFirstResponder(sender.superview?.superview?.superview)
+    }
+}
