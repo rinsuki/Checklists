@@ -59,6 +59,6 @@ extension WindowController: NSTableViewDelegate {
     }
     
     @objc func onChecked(_ sender: NSButton) {
-        window?.makeFirstResponder(sender.superview?.superview)
+        window?.makeFirstResponder(sender.superview?.superview?.superview)
     }
 }
