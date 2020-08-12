@@ -47,7 +47,7 @@ extension WindowController: NSTableViewDelegate {
             button.bind(.value, to: wrapper, withKeyPath: "objectValue.checked", options: nil)
             return wrapper
         case .init(rawValue: "textfield"):
-            let field = NSTextField(string: String(repeating: "A", count: row))
+            let field = NSTextField(string: "")
             field.drawsBackground = false
             field.isBezeled = false
             let wrapper = WrapperView(wrapped: field)
