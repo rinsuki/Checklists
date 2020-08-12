@@ -11,7 +11,18 @@ import Ikemen
 import SnapKit
 
 class ViewController: NSViewController {
-    lazy var tableView = NSTableView() ※ { v in
+    class TableView: NSTableView {
+        unowned var viewController: ViewController!
+        override func keyDown(with event: NSEvent) {
+            if event.charactersIgnoringModifiers == "\u{7F}", selectedRow >= 0 {
+                viewController.arrayController.remove(nil)
+                return
+            }
+            super.keyDown(with: event)
+        }
+    }
+    lazy var tableView = TableView() ※ { v in
+        v.viewController = self
         v.headerView = nil
         v.addTableColumn(.init(identifier: .init("checkbox")) ※ { c in
             let cell = NSButtonCell() ※ { c in
@@ -24,6 +35,7 @@ class ViewController: NSViewController {
         v.allowsColumnResizing = false
         v.usesAutomaticRowHeights = true
         v.delegate = self
+        v.allowsMultipleSelection = true
     }
     lazy var tableScrollView = NSScrollView() ※ { v in
         v.documentView = tableView
@@ -39,10 +51,7 @@ class ViewController: NSViewController {
         }
         arrayController.bind(.contentArray, to: self, withKeyPath: "representedObject.content.checks", options: nil)
         tableView.bind(.content, to: arrayController, withKeyPath: "arrangedObjects", options: nil)
-    }
-    
-    override func viewWillAppear() {
-        super.viewWillAppear()
+        tableView.bind(.selectionIndexes, to: arrayController, withKeyPath: "selectionIndexes", options: nil)
     }
     
     var document: Document {
@@ -54,7 +63,6 @@ class ViewController: NSViewController {
         let row = document.content.checks.count - 1
         // 新しく追加した物にフォーカスを当てる
         let view = tableView.view(atColumn: 1, row: row, makeIfNecessary: true) as! WrapperView<NSTextField>
-        print(view)
         tableView.selectRowIndexes(.init(integer: row), byExtendingSelection: false)
         view.window?.makeFirstResponder(view.wrappedView)
     }
