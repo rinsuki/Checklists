@@ -9,8 +9,26 @@
 import Cocoa
 
 class Check: NSObject, Codable, NSCopying {
-    @objc dynamic var checked: Bool
-    @objc dynamic var title: String
+    @objc dynamic var checked: Bool {
+        didSet {
+            undoManager?.registerUndo(withTarget: self) { content in
+                content.checked = oldValue
+            }
+        }
+    }
+    @objc dynamic var title: String {
+        didSet {
+            undoManager?.registerUndo(withTarget: self) { content in
+                content.title = oldValue
+            }
+        }
+    }
+    var undoManager: UndoManager? = nil
+    
+    enum CodingKeys: String, CodingKey {
+        case checked
+        case title
+    }
     
     init(title: String) {
         self.title = title
@@ -25,10 +43,28 @@ class Check: NSObject, Codable, NSCopying {
 }
 
 class DocumentContent: NSObject, Codable {
-    @objc dynamic var checks = [Check]()
+    @objc dynamic var checks = [Check]() {
+        didSet {
+            registerUndoManagerToChildrens()
+            undoManager?.registerUndo(withTarget: self) { content in
+                content.checks = oldValue
+            }
+        }
+    }
+    var undoManager: UndoManager? = nil {
+        didSet {
+            registerUndoManagerToChildrens()
+        }
+    }
     
     enum CodingKeys: CodingKey {
         case checks
+    }
+    
+    func registerUndoManagerToChildrens() {
+        for check in checks {
+            check.undoManager = undoManager
+        }
     }
 }
 
@@ -38,6 +74,7 @@ class Document: NSDocument, Codable {
     override init() {
         super.init()
         // Add your subclass-specific initialization here.
+        content.undoManager = undoManager
     }
 
     override class var autosavesInPlace: Bool {
@@ -67,7 +104,8 @@ class Document: NSDocument, Codable {
         // Alternatively, you could remove this method and override read(from:ofType:) instead.
         // If you do, you should also override isEntireFileLoaded to return false if the contents are lazily loaded.
         let decoder = JSONDecoder()
-        self.content = try decoder.decode(DocumentContent.self, from: data)
+        content = try decoder.decode(DocumentContent.self, from: data)
+        content.undoManager = undoManager
     }
 
 
