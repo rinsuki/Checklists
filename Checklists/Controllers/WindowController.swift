@@ -30,37 +30,29 @@ class WindowController: NSWindowController {
     
     func beforeAppear() {
         viewController.tableView.delegate = self
-        viewController.tableView.dataSource = self
+//        viewController.tableView.dataSource = self
     }
     
-    @objc func createNewCheck(_ sender: AnyObject) {
-        documentTyped.content.checks.append(.init(title: ""))
-        let row = documentTyped.content.checks.count-1
-        let indexSet = IndexSet(integer: row)
-        viewController.tableView.beginUpdates()
-        viewController.tableView.insertRows(at: indexSet, withAnimation: [])
-        viewController.tableView.endUpdates()
-        viewController.tableView.selectRowIndexes(indexSet, byExtendingSelection: false)
-        // 新しく追加した物にフォーカスを当てる
-        window?.makeFirstResponder(viewController.tableView.view(atColumn: 1, row: row, makeIfNecessary: false))
-    }
+    
 }
 
 extension WindowController: NSTableViewDelegate {
+    
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
         let check = documentTyped.content.checks[row]
         switch tableColumn?.identifier {
         case .init(rawValue: "checkbox"):
-            let button = CheckButton(checkboxWithTitle: "", target: self, action: #selector(onChecked(_:)))
-            button.assign(check: check)
-            return button
+            let button = NSButton(checkboxWithTitle: "", target: self, action: #selector(onChecked(_:)))
+            let wrapper = WrapperView(wrapped: button)
+            button.bind(.value, to: wrapper, withKeyPath: "objectValue.checked", options: nil)
+            return wrapper
         case .init(rawValue: "textfield"):
-            let field = CheckTitleField(string: String(repeating: "A", count: row))
-            field.assign(check: check)
-            field.stringValue = check.title
+            let field = NSTextField(string: String(repeating: "A", count: row))
             field.drawsBackground = false
             field.isBezeled = false
-            return field
+            let wrapper = WrapperView(wrapped: field)
+            field.bind(.value, to: wrapper, withKeyPath: "objectValue.title", options: nil)
+            return wrapper
         default:
             return nil
         }
@@ -70,10 +62,3 @@ extension WindowController: NSTableViewDelegate {
         window?.makeFirstResponder(sender.superview?.superview)
     }
 }
-
-extension WindowController: NSTableViewDataSource {
-    func numberOfRows(in tableView: NSTableView) -> Int {
-        return documentTyped.content.checks.count
-    }
-}
-

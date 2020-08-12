@@ -7,54 +7,28 @@
 //
 
 import Cocoa
-import Combine
 
-class Check: NSObject, Codable {
-    @Published var checked: Bool
-    @Published var title: String
+class Check: NSObject, Codable, NSCopying {
+    @objc dynamic var checked: Bool
+    @objc dynamic var title: String
     
     init(title: String) {
         self.title = title
         self.checked = false
     }
-    
-    enum CodingKeys: String, CodingKey {
-        case checked
-        case title
-    }
 
-    required init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        checked = try container.decode(Bool.self, forKey: .checked)
-        title = try container.decode(String.self, forKey: .title)
-    }
-    
-    func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(checked, forKey: .checked)
-        try container.encode(title, forKey: .title)
+    func copy(with zone: NSZone? = nil) -> Any {
+        let new = Check(title: title)
+        new.checked = checked
+        return new
     }
 }
 
 class DocumentContent: NSObject, Codable {
-    var checks = [Check]()
+    @objc dynamic var checks = [Check]()
     
     enum CodingKeys: CodingKey {
         case checks
-    }
-    
-    override init() {
-        super.init()
-    }
-    
-    required init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        checks = try container.decode([Check].self, forKey: .checks)
-    }
-    
-    func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(checks, forKey: .checks)
     }
 }
 
@@ -72,7 +46,9 @@ class Document: NSDocument, Codable {
     
     override func makeWindowControllers() {
         // Create the window and set the content view.
-        self.addWindowController(WindowController())
+        let wc = WindowController()
+        wc.viewController.representedObject = self
+        self.addWindowController(wc)
     }
     
     override var fileNameExtensionWasHiddenInLastRunSavePanel: Bool {
